@@ -35,7 +35,6 @@ public class EmployeeController {
 
     /**
      * 登录
-     *
      * @param employeeLoginDTO
      * @return
      */
@@ -94,5 +93,26 @@ public class EmployeeController {
         log.info("员工分页查询，参数为：{}", employeePageQueryDTO);
         PageResult pageQuery = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageQuery);
+    }
+
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用禁用员工账号")
+    public Result startOrStop(@PathVariable("status") Integer status, Long id){
+        employeeService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    @ApiOperation("查询员工信息")
+    @GetMapping("/{id}")
+    public Result selectById(@PathVariable("id") Long id){
+        Employee employee = employeeService.selectById(id);
+        return  Result.success(employee);
+    }
+
+    @ApiOperation("修改员工信息")
+    @PutMapping
+    public Result updateEmployee(@RequestBody EmployeeDTO employeeDTO){
+        employeeService.updateEmployee(employeeDTO);
+        return Result.success();
     }
 }

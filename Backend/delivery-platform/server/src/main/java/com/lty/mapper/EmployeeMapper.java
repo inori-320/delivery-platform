@@ -1,6 +1,5 @@
 package com.lty.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.Page;
 import com.lty.dto.EmployeePageQueryDTO;
 import com.lty.entity.Employee;
@@ -24,4 +23,9 @@ public interface EmployeeMapper{
     void insert(Employee employee);
 
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+
+    void update(Employee employee);
+
+    @Select("select * from employee where id = #{id}")
+    Employee getById(Long id);
 }
