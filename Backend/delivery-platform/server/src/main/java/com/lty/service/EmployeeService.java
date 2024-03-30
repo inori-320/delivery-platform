@@ -2,7 +2,9 @@ package com.lty.service;
 
 import com.lty.dto.EmployeeDTO;
 import com.lty.dto.EmployeeLoginDTO;
+import com.lty.dto.EmployeePageQueryDTO;
 import com.lty.entity.Employee;
+import com.lty.result.PageResult;
 
 public interface EmployeeService {
 
@@ -14,4 +16,6 @@ public interface EmployeeService {
     Employee login(EmployeeLoginDTO employeeLoginDTO);
 
     void save(EmployeeDTO employee);
+
+    PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 }

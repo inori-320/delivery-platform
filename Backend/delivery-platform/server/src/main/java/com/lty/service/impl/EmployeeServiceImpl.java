@@ -1,16 +1,20 @@
 package com.lty.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.lty.constant.MessageConstant;
 import com.lty.constant.PasswordConstant;
 import com.lty.constant.StatusConstant;
 import com.lty.context.BaseContext;
 import com.lty.dto.EmployeeDTO;
 import com.lty.dto.EmployeeLoginDTO;
+import com.lty.dto.EmployeePageQueryDTO;
 import com.lty.entity.Employee;
 import com.lty.exception.AccountLockedException;
 import com.lty.exception.AccountNotFoundException;
 import com.lty.exception.PasswordErrorException;
 import com.lty.mapper.EmployeeMapper;
+import com.lty.result.PageResult;
 import com.lty.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +61,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * 新增员工
      * @param employeeDTO
      */
-    @Override
     public void save(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         // 将DTO对象拷贝到实体对象中
@@ -74,6 +77,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
 
         employeeMapper.insert(employee);
+    }
+
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
+        return new PageResult(page.getTotal(), page.getResult());
     }
 
 }
