@@ -8,15 +8,15 @@ spring:
     allow-circular-references: true
   datasource:
     druid:
-      driver-class-name: ${sky.datasource.driver-class-name}
-      url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: ${sky.datasource.username}
-      password: ${sky.datasource.password}
+      driver-class-name: ${lty.datasource.driver-class-name}
+      url: jdbc:mysql://${lty.datasource.host}:${lty.datasource.port}/${lty.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${lty.datasource.username}
+      password: ${lty.datasource.password}
 
-mybatis:
+mybatis-plus:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.sky.entity
+  type-aliases-package: com.lty.entity
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true
@@ -24,12 +24,12 @@ mybatis:
 logging:
   level:
     com:
-      sky:
+      lty:
         mapper: debug
         service: info
         controller: info
 
-sky:
+lty:
   jwt:
     # 设置jwt签名加密时使用的秘钥
     admin-secret-key: itcast
