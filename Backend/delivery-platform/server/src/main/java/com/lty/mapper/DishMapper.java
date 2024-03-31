@@ -1,5 +1,8 @@
 package com.lty.mapper;
 
+import com.lty.annotation.AutoFill;
+import com.lty.entity.Dish;
+import com.lty.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -14,4 +17,6 @@ public interface DishMapper {
     @Select("select count(id) from dish where category_id = #{categoryId}")
     Integer countByCategoryId(Long categoryId);
 
+    @AutoFill(OperationType.INSERT)
+    void insertNewDish(Dish dish);
 }
