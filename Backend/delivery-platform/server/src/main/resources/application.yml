@@ -16,7 +16,7 @@ spring:
 mybatis-plus:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.lty.entity
+  type-aliases-package: com.lty.entity, com.lty.vo
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true

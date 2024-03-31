@@ -1,11 +1,16 @@
 package com.lty.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.lty.dto.DishDTO;
+import com.lty.dto.DishPageQueryDTO;
 import com.lty.entity.Dish;
 import com.lty.entity.DishFlavor;
 import com.lty.mapper.DishMapper;
 import com.lty.mapper.FlavorMapper;
+import com.lty.result.PageResult;
 import com.lty.service.DishService;
+import com.lty.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +43,11 @@ public class DishServiceImpl implements DishService {
             });
             flavorMapper.insertBatch(flavors);
         }
+    }
+
+    public PageResult pageQuery(DishPageQueryDTO queryDTO) {
+        PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
+        Page<DishVO> page = dishMapper.pageQuery(queryDTO);
+        return new PageResult(page.getTotal(), page.getResult());
     }
 }

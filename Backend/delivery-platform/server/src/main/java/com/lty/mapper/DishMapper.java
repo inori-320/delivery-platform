@@ -1,8 +1,11 @@
 package com.lty.mapper;
 
+import com.github.pagehelper.Page;
 import com.lty.annotation.AutoFill;
+import com.lty.dto.DishPageQueryDTO;
 import com.lty.entity.Dish;
 import com.lty.enumeration.OperationType;
+import com.lty.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -19,4 +22,6 @@ public interface DishMapper {
 
     @AutoFill(OperationType.INSERT)
     void insertNewDish(Dish dish);
+
+    Page<DishVO> pageQuery(DishPageQueryDTO queryDTO);
 }
