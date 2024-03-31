@@ -6,8 +6,11 @@ import com.lty.dto.DishPageQueryDTO;
 import com.lty.entity.Dish;
 import com.lty.enumeration.OperationType;
 import com.lty.vo.DishVO;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface DishMapper {
@@ -24,4 +27,13 @@ public interface DishMapper {
     void insertNewDish(Dish dish);
 
     Page<DishVO> pageQuery(DishPageQueryDTO queryDTO);
+
+    @Delete("delete from dish where id = #{id}")
+    void deleteById(Long id);
+
+    @Select("select * from dish where id = #{id};")
+    Dish getById(Long id);
+
+    @Delete("delete from dish_flavor where dish_id = #{id}")
+    void deleteByDishId(Long id);
 }

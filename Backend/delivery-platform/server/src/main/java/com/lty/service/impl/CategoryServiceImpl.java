@@ -11,7 +11,7 @@ import com.lty.entity.Category;
 import com.lty.exception.DeletionNotAllowedException;
 import com.lty.mapper.CategoryMapper;
 import com.lty.mapper.DishMapper;
-import com.lty.mapper.SetmealMapper;
+import com.lty.mapper.SetMealMapper;
 import com.lty.result.PageResult;
 import com.lty.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private DishMapper dishMapper;
     @Autowired
-    private SetmealMapper setmealMapper;
+    private SetMealMapper setmealMapper;
 
     /**
      * 新增分类

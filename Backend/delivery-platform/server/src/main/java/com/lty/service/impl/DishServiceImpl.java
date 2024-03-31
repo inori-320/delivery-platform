@@ -2,12 +2,16 @@ package com.lty.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.lty.constant.MessageConstant;
+import com.lty.constant.StatusConstant;
 import com.lty.dto.DishDTO;
 import com.lty.dto.DishPageQueryDTO;
 import com.lty.entity.Dish;
 import com.lty.entity.DishFlavor;
+import com.lty.exception.DeletionNotAllowedException;
 import com.lty.mapper.DishMapper;
 import com.lty.mapper.FlavorMapper;
+import com.lty.mapper.SetMealDishMapper;
 import com.lty.result.PageResult;
 import com.lty.service.DishService;
 import com.lty.vo.DishVO;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author lty
@@ -29,6 +34,8 @@ public class DishServiceImpl implements DishService {
     private DishMapper dishMapper;
     @Autowired
     private FlavorMapper flavorMapper;
+    @Autowired
+    private SetMealDishMapper setMealDishMapper;
 
     @Transactional
     public void saveWithFlavor(DishDTO dishDTO) {
@@ -49,5 +56,29 @@ public class DishServiceImpl implements DishService {
         PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
         Page<DishVO> page = dishMapper.pageQuery(queryDTO);
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * 单个或批量删除菜品
+     * @param ids id列表
+     */
+    // TODO: 目前这个逻辑有问题，如果批量删除内有一个不行就全不行了，而且用到了多次循环，并且调用了多次数据库，需要优化
+    @Transactional
+    public void deleteOneOrBatch(List<Long> ids) {
+        if(ids.isEmpty()) return;
+        for (Long id : ids) {
+            Dish dish = dishMapper.getById(id);
+            if(Objects.equals(dish.getStatus(), StatusConstant.ENABLE)){
+                throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+            }
+        }
+        List<Long> setMealIds = setMealDishMapper.getSetMealIdsByDish(ids);
+        if(setMealIds != null && !setMealIds.isEmpty()){
+            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+        }
+        for (Long id : ids) {
+            dishMapper.deleteById(id);
+            dishMapper.deleteByDishId(id);
+        }
     }
 }
