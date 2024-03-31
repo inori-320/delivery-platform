@@ -3,6 +3,7 @@ package com.lty.service;
 import com.lty.dto.DishDTO;
 import com.lty.dto.DishPageQueryDTO;
 import com.lty.result.PageResult;
+import com.lty.vo.DishVO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,4 +17,8 @@ public interface DishService {
     PageResult pageQuery(DishPageQueryDTO queryDTO);
 
     void deleteOneOrBatch(List<Long> ids);
+
+    DishVO getByIdWithFlavor(Long id);
+
+    void updateDish(DishDTO dishDTO);
 }
