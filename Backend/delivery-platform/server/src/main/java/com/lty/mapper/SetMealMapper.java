@@ -1,8 +1,13 @@
 package com.lty.mapper;
 
+import com.github.pagehelper.Page;
 import com.lty.annotation.AutoFill;
+import com.lty.dto.SetmealPageQueryDTO;
 import com.lty.entity.Setmeal;
 import com.lty.enumeration.OperationType;
+import com.lty.vo.SetmealVO;
+import lombok.Setter;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -20,4 +25,12 @@ public interface SetMealMapper {
 
     @AutoFill(OperationType.INSERT)
     void insert(Setmeal setmeal);
+
+    Page<SetmealVO> pageQuery(SetmealPageQueryDTO queryDTO);
+
+    @Select("select * from setmeal where id = #{id}")
+    Setmeal getById(Long id);
+
+    @Delete("delete from setmeal where id = #{id}")
+    void deleteById(Long id);
 }

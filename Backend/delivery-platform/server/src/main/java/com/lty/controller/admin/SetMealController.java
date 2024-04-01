@@ -1,11 +1,16 @@
 package com.lty.controller.admin;
 
 import com.lty.dto.SetmealDTO;
+import com.lty.dto.SetmealPageQueryDTO;
 import com.lty.entity.Dish;
+import com.lty.entity.Setmeal;
+import com.lty.result.PageResult;
 import com.lty.result.Result;
 import com.lty.service.SetMealService;
+import com.lty.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +30,20 @@ public class SetMealController {
     @PostMapping
     public Result save(@RequestBody SetmealDTO setmealDTO){
         setMealService.saveWithDish(setmealDTO);
+        return Result.success();
+    }
+
+    @GetMapping("/page")
+    @ApiOperation("套餐分页查询")
+    public Result<PageResult> page(SetmealPageQueryDTO queryDTO){
+        PageResult result = setMealService.pageQuery(queryDTO);
+        return Result.success(result);
+    }
+
+    @DeleteMapping
+    @ApiOperation("删除套餐")
+    public Result deleteOneOrBatch(@RequestParam List<Long> ids){
+        setMealService.deleteOneBatch(ids);
         return Result.success();
     }
 }
