@@ -46,4 +46,20 @@
         </where>
         order by d.create_time desc
     </select>
+
+    <select id="selectDish" resultType="dish" parameterType="dish">
+        select * from dish
+        <where>
+            <if test="name != null">
+                ans name like concat('%', ${name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
 </mapper>

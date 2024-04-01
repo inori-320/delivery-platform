@@ -2,6 +2,7 @@ package com.lty.controller.admin;
 
 import com.lty.dto.DishDTO;
 import com.lty.dto.DishPageQueryDTO;
+import com.lty.entity.Dish;
 import com.lty.result.PageResult;
 import com.lty.result.Result;
 import com.lty.service.DishService;
@@ -60,5 +61,12 @@ public class DishController {
     public Result updateDish(@RequestBody DishDTO dishDTO){
         dishService.updateDish(dishDTO);
         return Result.success();
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("根据分类ID查询菜品")
+    public Result<List<Dish>> selectDishByCategoryId(Long categoryId){
+        List<Dish> list = dishService.selectDish(categoryId);
+        return Result.success(list);
     }
 }

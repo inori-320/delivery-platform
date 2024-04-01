@@ -1,5 +1,8 @@
 package com.lty.mapper;
 
+import com.lty.annotation.AutoFill;
+import com.lty.entity.SetmealDish;
+import com.lty.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,4 +18,6 @@ public interface SetMealDishMapper {
      * @return
      */
     List<Long> getSetMealIdsByDish(List<Long> dishIds);
+
+    void insertBatch(List<SetmealDish> setmealDishes);
 }

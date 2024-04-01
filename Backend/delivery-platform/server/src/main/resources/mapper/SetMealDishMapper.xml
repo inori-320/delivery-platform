@@ -3,6 +3,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lty.mapper.SetMealDishMapper">
 
+    <insert id="insertBatch" parameterType="list">
+        insert into setmeal_dish (setmeal_id, dish_id, name, price, copies)
+        values
+        <foreach collection="setmealDishes" item="i" separator=",">
+            (#{i.setmealId},#{i.dishId},#{i.name},#{i.price},#{i.copies})
+        </foreach>
+    </insert>
+
     <select id="getSetMealIdsByDish" resultType="java.lang.Long">
         select setmeal_id from setmeal_dish where dish_id in
             <foreach collection="dishIds" item="id" separator="," open="(" close=")">
