@@ -4,13 +4,13 @@ import com.github.pagehelper.Page;
 import com.lty.annotation.AutoFill;
 import com.lty.dto.SetmealPageQueryDTO;
 import com.lty.entity.Setmeal;
+import com.lty.entity.SetmealDish;
 import com.lty.enumeration.OperationType;
 import com.lty.vo.SetmealVO;
 import lombok.Setter;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 public interface SetMealMapper {
@@ -33,4 +33,7 @@ public interface SetMealMapper {
 
     @Delete("delete from setmeal where id = #{id}")
     void deleteById(Long id);
+
+    @AutoFill(OperationType.UPDATE)
+    void update(Setmeal setmeal);
 }

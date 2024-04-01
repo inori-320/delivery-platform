@@ -5,6 +5,7 @@ import com.lty.entity.SetmealDish;
 import com.lty.enumeration.OperationType;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -24,4 +25,7 @@ public interface SetMealDishMapper {
 
     @Delete("delete from setmeal_dish where setmeal_id = #{id}")
     void deleteBySetMealId(Long id);
+
+    @Select("select * from setmeal_dish where setmeal_id = #{id}")
+    List<SetmealDish> getBySetMealId(Long id);
 }
