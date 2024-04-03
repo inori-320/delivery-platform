@@ -12,11 +12,16 @@ spring:
       url: jdbc:mysql://${lty.datasource.host}:${lty.datasource.port}/${lty.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: ${lty.datasource.username}
       password: ${lty.datasource.password}
+  redis:
+    host: ${lty.redis.host}
+    port: ${lty.redis.port}
+    database: ${lty.redis.database}
+
 
 mybatis-plus:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.lty.entity, com.lty.vo
+  type-aliases-package: com.lty.entity, com.lty.vo, com.lty.dto
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true

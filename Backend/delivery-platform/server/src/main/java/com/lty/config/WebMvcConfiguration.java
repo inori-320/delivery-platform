@@ -46,7 +46,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * @return
      */
     @Bean
-    public Docket docket() {
+    public Docket docketAdmin() {
         log.info("准备生成接口文档...");
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title("外卖平台接口文档")
@@ -54,9 +54,27 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .description("外卖平台接口文档")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("商家端")
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.lty.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.lty.controller.admin"))
+                .paths(PathSelectors.any())
+                .build();
+        return docket;
+    }
+
+    @Bean
+    public Docket docketUser() {
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("外卖平台接口文档—")
+                .version("1.0")
+                .description("外卖平台接口文档")
+                .build();
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("用户端")
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.lty.controller.user"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;

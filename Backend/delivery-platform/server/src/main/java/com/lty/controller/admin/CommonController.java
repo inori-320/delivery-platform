@@ -4,6 +4,7 @@ import com.lty.constant.MessageConstant;
 import com.lty.result.Result;
 import com.lty.utils.AliOssUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ public class CommonController {
     @Autowired
     private AliOssUtil util;
 
+    @ApiOperation("上传图片")
     @PostMapping("/upload")
     public Result<String> upload(MultipartFile file){
         try {
