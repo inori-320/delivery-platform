@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class SetMealController {
 
     @ApiOperation("新增套餐")
     @PostMapping
+    @CacheEvict(cacheNames = "setMealCache", key = "#setmealDTO.categoryId")
     public Result save(@RequestBody SetmealDTO setmealDTO){
         setMealService.saveWithDish(setmealDTO);
         return Result.success();
@@ -43,6 +45,7 @@ public class SetMealController {
 
     @DeleteMapping
     @ApiOperation("删除套餐")
+    @CacheEvict(cacheNames = "setMealCache", allEntries = true)
     public Result deleteOneOrBatch(@RequestParam List<Long> ids){
         setMealService.deleteOneBatch(ids);
         return Result.success();
@@ -57,13 +60,16 @@ public class SetMealController {
 
     @PutMapping
     @ApiOperation("修改套餐")
+    @CacheEvict(cacheNames = "setMealCache", allEntries = true)
     public Result updateSetMeal(@RequestBody SetmealDTO setmealDTO){
         setMealService.updateSetMeal(setmealDTO);
         return Result.success();
     }
 
+    // TODO: 这里还是有点问题的，对某个套餐内包含的菜品停售了，对应的套餐还能在用户端显示。这个问题是因为你起售停售没有判断菜品在不在起售的套餐内
     @PostMapping("/status/{status}")
     @ApiOperation("修改状态")
+    @CacheEvict(cacheNames = "setMealCache", allEntries = true)
     public Result updateStatus(@PathVariable Integer status, Long id){
         setMealService.updateStatus(status, id);
         return Result.success();
