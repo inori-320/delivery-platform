@@ -8,7 +8,9 @@ import com.lty.dto.DishDTO;
 import com.lty.dto.DishPageQueryDTO;
 import com.lty.entity.Dish;
 import com.lty.entity.DishFlavor;
+import com.lty.entity.Setmeal;
 import com.lty.exception.DeletionNotAllowedException;
+import com.lty.exception.SetmealEnableFailedException;
 import com.lty.mapper.DishMapper;
 import com.lty.mapper.FlavorMapper;
 import com.lty.mapper.SetMealDishMapper;
@@ -19,6 +21,7 @@ import com.lty.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,9 +108,7 @@ public class DishServiceImpl implements DishService {
         // 修改成当前设置的口味数据
         List<DishFlavor> flavors = dishDTO.getFlavors();
         if(flavors != null && !flavors.isEmpty()){
-            flavors.forEach(dishFlavor -> {
-                dishFlavor.setDishId(dishDTO.getId());
-            });
+            flavors.forEach(dishFlavor -> dishFlavor.setDishId(dishDTO.getId()));
             flavorMapper.insertBatch(flavors);
         }
     }
@@ -124,7 +125,6 @@ public class DishServiceImpl implements DishService {
      */
     public List<DishVO> listWithFlavor(Dish dish) {
         List<Dish> dishList = dishMapper.selectDish(dish);
-
         List<DishVO> dishVOList = new ArrayList<>();
 
         for (Dish d : dishList) {
@@ -139,5 +139,10 @@ public class DishServiceImpl implements DishService {
         }
 
         return dishVOList;
+    }
+
+    public void updateDishStatus(Integer status, Long id) {
+        Dish dish = Dish.builder().status(status).id(id).build();
+        dishMapper.update(dish);
     }
 }

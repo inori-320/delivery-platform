@@ -95,7 +95,6 @@ public class SetMealServiceImpl implements SetMealService {
         setMealDishMapper.insertBatch(setmealDishes);
     }
 
-    @Override
     public void updateStatus(Integer status, Long id) {
         if(status == StatusConstant.ENABLE){
             List<Dish> dishes = dishMapper.getBySetMealId(id);
@@ -111,12 +110,10 @@ public class SetMealServiceImpl implements SetMealService {
         setMealMapper.update(setmeal);
     }
 
-    @Override
     public List<Setmeal> list(Setmeal setmeal) {
         return setMealMapper.list(setmeal);
     }
 
-    @Override
     public List<DishItemVO> getDishItemById(Long id) {
         return setMealMapper.getDishItemBySetmealId(id);
     }
