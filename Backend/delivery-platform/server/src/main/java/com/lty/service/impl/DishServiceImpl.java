@@ -12,6 +12,7 @@ import com.lty.exception.DeletionNotAllowedException;
 import com.lty.mapper.DishMapper;
 import com.lty.mapper.FlavorMapper;
 import com.lty.mapper.SetMealDishMapper;
+import com.lty.mapper.SetMealMapper;
 import com.lty.result.PageResult;
 import com.lty.service.DishService;
 import com.lty.vo.DishVO;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,6 +38,8 @@ public class DishServiceImpl implements DishService {
     private FlavorMapper flavorMapper;
     @Autowired
     private SetMealDishMapper setMealDishMapper;
+    @Autowired
+    private SetMealMapper setMealMapper;
 
     @Transactional
     public void saveWithFlavor(DishDTO dishDTO) {
@@ -111,5 +115,29 @@ public class DishServiceImpl implements DishService {
     public List<Dish> selectDish(Long categoryId) {
         Dish dish = Dish.builder().categoryId(categoryId).status(StatusConstant.ENABLE).build();
         return dishMapper.selectDish(dish);
+    }
+
+    /**
+     * 条件查询菜品和口味
+     * @param dish
+     * @return
+     */
+    public List<DishVO> listWithFlavor(Dish dish) {
+        List<Dish> dishList = dishMapper.selectDish(dish);
+
+        List<DishVO> dishVOList = new ArrayList<>();
+
+        for (Dish d : dishList) {
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(d,dishVO);
+
+            //根据菜品id查询对应的口味
+            List<DishFlavor> flavors = flavorMapper.getByDishId(d.getId());
+
+            dishVO.setFlavors(flavors);
+            dishVOList.add(dishVO);
+        }
+
+        return dishVOList;
     }
 }

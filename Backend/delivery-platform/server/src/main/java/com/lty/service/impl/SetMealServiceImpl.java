@@ -16,6 +16,7 @@ import com.lty.mapper.SetMealDishMapper;
 import com.lty.mapper.SetMealMapper;
 import com.lty.result.PageResult;
 import com.lty.service.SetMealService;
+import com.lty.vo.DishItemVO;
 import com.lty.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,5 +109,15 @@ public class SetMealServiceImpl implements SetMealService {
         }
         Setmeal setmeal = Setmeal.builder().id(id).status(status).build();
         setMealMapper.update(setmeal);
+    }
+
+    @Override
+    public List<Setmeal> list(Setmeal setmeal) {
+        return setMealMapper.list(setmeal);
+    }
+
+    @Override
+    public List<DishItemVO> getDishItemById(Long id) {
+        return setMealMapper.getDishItemBySetmealId(id);
     }
 }
