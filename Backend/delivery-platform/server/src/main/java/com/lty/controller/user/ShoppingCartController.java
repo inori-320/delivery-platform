@@ -31,7 +31,7 @@ public class ShoppingCartController {
         return Result.success();
     }
 
-    @ApiOperation("添加购物车")
+    @ApiOperation("减少购物车物品")
     @PostMapping("/sub")
     public Result subDish(@RequestBody ShoppingCartDTO shoppingCartDTO){
         shoppingCartService.subDish(shoppingCartDTO);

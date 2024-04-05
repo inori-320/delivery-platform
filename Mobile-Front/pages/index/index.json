@@ -1,6 +1,6 @@
 {
   "navigationStyle": "custom",
-  "navigationBarTitleText": "苍穹外卖",
+  "navigationBarTitleText": "杜师傅餐饮——猛火爆炒",
   "usingComponents": {
     "nav-bar": "/pages/common/Navbar/navbar",
     "phone": "/components/uni-phone/index"
