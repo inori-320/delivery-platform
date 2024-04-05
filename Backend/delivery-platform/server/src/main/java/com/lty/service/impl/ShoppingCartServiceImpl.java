@@ -56,4 +56,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
             shoppingCartMapper.insert(shoppingCart);
         }
     }
+
+    public void subDish(ShoppingCartDTO shoppingCartDTO) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
+    }
+
+    public void cleanCart() {
+        shoppingCartMapper.cleanCartByUserId(BaseContext.getCurrentId());
+    }
+
+    public List<ShoppingCart> chackShoppingCart() {
+        ShoppingCart shoppingCart = ShoppingCart.builder().userId(BaseContext.getCurrentId()).build();
+        return shoppingCartMapper.shopIsExist(shoppingCart);
+    }
 }
