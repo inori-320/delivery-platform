@@ -52,3 +52,10 @@ lty:
   wechat:
     appid: ${lty.wechat.appid}
     secret: ${lty.wechat.secret}
+    mchid: ${lty.wechat.mchid}
+    mchSerialNo: ${lty.wechat.mchSerialNo}
+    privateKeyFilePath: ${lty.wechat.privateKeyFilePath}
+    apiV3Key: ${lty.wechat.apiV3Key}
+    weChatPayCertFilePath: ${lty.wechat.weChatPayCertFilePath}
+    notifyUrl: ${lty.wechat.notifyUrl}
+    refundNotifyUrl: ${lty.wechat.refundNotifyUrl}
