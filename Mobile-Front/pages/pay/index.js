@@ -240,10 +240,7 @@ var _api = __webpack_require__(/*! @/pages/api/api.js */ 24);function ownKeys(ob
             //     console.log('支付成功!')
             //   }
             // })
-
-
             uni.redirectTo({url: '/pages/success/index?orderId=' + _this.orderId });
-
           } else {
             wx.showModal({
               title: '提示',

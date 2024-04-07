@@ -2,8 +2,10 @@ package com.lty.service;
 
 import com.lty.dto.OrdersPaymentDTO;
 import com.lty.dto.OrdersSubmitDTO;
+import com.lty.result.PageResult;
 import com.lty.vo.OrderPaymentVO;
 import com.lty.vo.OrderSubmitVO;
+import com.lty.vo.OrderVO;
 
 /**
  * @author lty
@@ -24,4 +26,12 @@ public interface OrderService {
      * @param outTradeNo
      */
     void paySuccess(String outTradeNo);
+
+    PageResult pageQuery(int pageNum, int pageSize, Integer status);
+
+    OrderVO showDetail(Long id);
+
+    void cancelOrder(Long id) throws Exception;
+
+    void reOrder(Long id);
 }

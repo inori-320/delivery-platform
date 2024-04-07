@@ -1,8 +1,11 @@
 package com.lty.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.lty.constant.MessageConstant;
 import com.lty.context.BaseContext;
+import com.lty.dto.OrdersPageQueryDTO;
 import com.lty.dto.OrdersPaymentDTO;
 import com.lty.dto.OrdersSubmitDTO;
 import com.lty.entity.*;
@@ -10,17 +13,17 @@ import com.lty.exception.AddressBookBusinessException;
 import com.lty.exception.OrderBusinessException;
 import com.lty.exception.ShoppingCartBusinessException;
 import com.lty.mapper.*;
+import com.lty.result.PageResult;
 import com.lty.service.OrderService;
 import com.lty.utils.WeChatPayUtil;
 import com.lty.vo.OrderPaymentVO;
 import com.lty.vo.OrderSubmitVO;
-import org.aspectj.weaver.ast.Or;
+import com.lty.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +66,11 @@ public class OrderServiceImpl implements OrderService {
         orders.setNumber(String.valueOf(System.currentTimeMillis()));
         orders.setPhone(addressBook.getPhone());
         orders.setUserId(userId);
+        orders.setConsignee(addressBook.getConsignee());
+        orders.setAddress(addressBook.getProvinceName()
+                + addressBook.getCityName()
+                + addressBook.getDistrictName()
+                + addressBook.getDetail());
         orderMapper.insertOrder(orders);
         // 向订单详情表中插入多条数据
         List<OrderDetail> orderDetails = new ArrayList<>();
@@ -112,11 +120,12 @@ public class OrderServiceImpl implements OrderService {
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
         //为替代微信支付成功后的数据库订单状态更新，多定义一个方法进行修改
-        Integer OrderPaidStatus = Orders.PAID; //支付状态，已支付
-        Integer OrderStatus = Orders.TO_BE_CONFIRMED;  //订单状态，待接单
-
-        orderMapper.updateStatus(OrderStatus, OrderPaidStatus, LocalDateTime.now(), ordersPaymentDTO.getOrderNumber());
-        return new OrderPaymentVO();
+        Orders orders = new Orders();
+        orders.setStatus(Orders.TO_BE_CONFIRMED);
+        orders.setPayStatus(Orders.PAID);
+        orders.setNumber(ordersPaymentDTO.getOrderNumber());
+        orderMapper.update(orders);
+        return vo;
     }
 
     /**
@@ -138,5 +147,67 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+    }
+
+    public PageResult pageQuery(int pageNum, int pageSize, Integer status) {
+        PageHelper.startPage(pageNum, pageSize);
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        ordersPageQueryDTO.setStatus(status);
+
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        List<OrderVO> orders = new ArrayList<>();
+        if(page != null && page.getTotal() > 0){
+            for (Orders o: page){
+                Long orderId = o.getId();
+                OrderVO orderVO = new OrderVO();
+                List<OrderDetail> list = orderDetailMapper.getByOrderId(orderId);
+                BeanUtils.copyProperties(o, orderVO);
+                orderVO.setOrderDetailList(list);
+                orders.add(orderVO);
+            }
+        }
+        return new PageResult(page.getTotal(), orders);
+    }
+
+    public OrderVO showDetail(Long id) {
+        Orders order = orderMapper.getById(id);
+        List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
+
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(order, orderVO);
+        orderVO.setOrderDetailList(orderDetails);
+        return orderVO;
+    }
+
+    public void cancelOrder(Long id) throws Exception {
+        Orders order = orderMapper.getById(id);
+        if(order == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        if(order.getStatus() > 2){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders orders = new Orders();
+        orders.setId(id);
+        if(order.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+        /*
+            //调用微信支付退款接口
+            weChatPayUtil.refund(
+                    order.getNumber(), //商户订单号
+                    order.getNumber(), //商户退款单号
+                    new BigDecimal(0.01),//退款金额，单位 元
+                    new BigDecimal(0.01));//原订单金额
+         */
+            orders.setPayStatus(Orders.REFUND);
+        }
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelReason("用户取消");
+        orders.setCancelTime(LocalDateTime.now());
+        orderMapper.update(orders);
+    }
+
+    public void reOrder(Long id) {
+
     }
 }
