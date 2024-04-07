@@ -1,7 +1,6 @@
 package com.lty.service;
 
-import com.lty.dto.OrdersPaymentDTO;
-import com.lty.dto.OrdersSubmitDTO;
+import com.lty.dto.*;
 import com.lty.result.PageResult;
 import com.lty.vo.OrderPaymentVO;
 import com.lty.vo.OrderSubmitVO;
@@ -33,5 +32,11 @@ public interface OrderService {
 
     void cancelOrder(Long id) throws Exception;
 
+    void cancelOrder(OrdersCancelDTO ordersCancelDTO) throws Exception;
+
     void reOrder(Long id);
+
+    void confirm(OrdersConfirmDTO confirmDTO);
+
+    void reject(OrdersRejectionDTO rejectionDTO) throws Exception;
 }

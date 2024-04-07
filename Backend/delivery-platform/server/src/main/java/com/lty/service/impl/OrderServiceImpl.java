@@ -5,9 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.lty.constant.MessageConstant;
 import com.lty.context.BaseContext;
-import com.lty.dto.OrdersPageQueryDTO;
-import com.lty.dto.OrdersPaymentDTO;
-import com.lty.dto.OrdersSubmitDTO;
+import com.lty.dto.*;
 import com.lty.entity.*;
 import com.lty.exception.AddressBookBusinessException;
 import com.lty.exception.OrderBusinessException;
@@ -19,11 +17,14 @@ import com.lty.utils.WeChatPayUtil;
 import com.lty.vo.OrderPaymentVO;
 import com.lty.vo.OrderSubmitVO;
 import com.lty.vo.OrderVO;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
  * @author lty
  */
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
@@ -208,6 +210,27 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
     }
 
+    public void cancelOrder(OrdersCancelDTO ordersCancelDTO) throws Exception {
+        Orders orders = orderMapper.getById(ordersCancelDTO.getId());
+        Integer payStatus = orders.getPayStatus();
+        if(payStatus == 1){
+            /*
+            String refund = weChatPayUtil.refund(
+                    orders.getNumber(),
+                    orders.getNumber(),
+                    new BigDecimal(0.01),
+                    new BigDecimal(0.01));
+             */
+            log.info("申请退款");
+        }
+        Orders order = Orders.builder()
+                .id(ordersCancelDTO.getId())
+                .orderTime(LocalDateTime.now())
+                .status(Orders.CANCELLED)
+                .cancelReason(ordersCancelDTO.getCancelReason()).build();
+        orderMapper.update(orders);
+    }
+
     public void reOrder(Long id) {
         Long userId = BaseContext.getCurrentId();
         List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
@@ -219,5 +242,34 @@ public class OrderServiceImpl implements OrderService {
             return shoppingCart;
         }).toList();
         shoppingCartMapper.insertBatch(shoppingCarts);
+    }
+
+    public void confirm(OrdersConfirmDTO confirmDTO) {
+        Orders orders = Orders.builder().id(confirmDTO.getId()).status(Orders.CONFIRMED).build();
+        orderMapper.update(orders);
+    }
+
+    public void reject(OrdersRejectionDTO rejectionDTO) throws Exception {
+        Orders order = orderMapper.getById(rejectionDTO.getId());
+        if(order == null || !order.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Integer payStatus = order.getPayStatus();
+        if(payStatus.equals(Orders.PAID)){
+        /*
+            String refund = weChatPayUtil.refund(
+                    order.getNumber(),
+                    order.getNumber(),
+                    new BigDecimal(0.01),
+                    new BigDecimal(0.01));
+         */
+            log.info("申请退款");
+        }
+        Orders orders = new Orders();
+        orders.setId(order.getId());
+        orders.setStatus(Orders.CANCELLED);
+        orders.setRejectionReason(rejectionDTO.getRejectionReason());
+        orders.setCancelTime(LocalDateTime.now());
+        orderMapper.update(orders);
     }
 }
