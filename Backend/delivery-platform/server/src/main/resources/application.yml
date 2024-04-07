@@ -59,3 +59,7 @@ lty:
     weChatPayCertFilePath: ${lty.wechat.weChatPayCertFilePath}
     notifyUrl: ${lty.wechat.notifyUrl}
     refundNotifyUrl: ${lty.wechat.refundNotifyUrl}
+  shop:
+    address: 山东省淄博市临淄区临淄中学
+  baidu:
+    ak: 'xt8w06mrOHcOgApHHjDwF9CGbm284o2h'
