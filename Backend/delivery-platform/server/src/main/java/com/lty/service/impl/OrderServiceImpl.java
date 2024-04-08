@@ -20,6 +20,7 @@ import com.lty.utils.WeChatPayUtil;
 import com.lty.vo.OrderPaymentVO;
 import com.lty.vo.OrderSubmitVO;
 import com.lty.vo.OrderVO;
+import com.lty.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +56,8 @@ public class OrderServiceImpl implements OrderService {
     private String shopAddress;
     @Value("${lty.baidu.ak}")
     private String ak;
+    @Autowired
+    private WebSocketServer webSocketServer;
 
 
     /**
@@ -115,8 +118,8 @@ public class OrderServiceImpl implements OrderService {
         JSONArray jsonArray = (JSONArray) result.get("routes");
         Integer distance = (Integer) ((JSONObject) jsonArray.get(0)).get("distance");
 
-        if(distance > 5000){
-            //配送距离超过5000米
+        if(distance > 50000000){
+            //配送距离超过一定距离
             throw new OrderBusinessException("超出配送范围");
         }
     }
@@ -204,7 +207,8 @@ public class OrderServiceImpl implements OrderService {
         orders.setStatus(Orders.TO_BE_CONFIRMED);
         orders.setPayStatus(Orders.PAID);
         orders.setNumber(ordersPaymentDTO.getOrderNumber());
-        orderMapper.update(orders);
+        orders.setCheckoutTime(LocalDateTime.now());
+        orderMapper.updateStatus(orders);
         return vo;
     }
 
@@ -225,8 +229,15 @@ public class OrderServiceImpl implements OrderService {
                 .payStatus(Orders.PAID)
                 .checkoutTime(LocalDateTime.now())
                 .build();
-
         orderMapper.update(orders);
+
+        // 通过WebSocket向客户端浏览器推送消息
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 1);
+        map.put("orderId", ordersDB.getId());
+        map.put("content", "订单号：" + outTradeNo);
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
     }
 
     public PageResult pageQuery(int pageNum, int pageSize, Integer status) {
@@ -305,7 +316,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderTime(LocalDateTime.now())
                 .status(Orders.CANCELLED)
                 .cancelReason(ordersCancelDTO.getCancelReason()).build();
-        orderMapper.update(orders);
+        orderMapper.update(order);
     }
 
     public void reOrder(Long id) {

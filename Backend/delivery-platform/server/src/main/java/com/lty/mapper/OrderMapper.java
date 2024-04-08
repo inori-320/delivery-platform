@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author lty
@@ -30,11 +31,14 @@ public interface OrderMapper {
      */
     void update(Orders orders);
 
-    @Update("update orders set status = #{orderStatus},pay_status = #{orderPaidStatus} ,checkout_time = #{checkOutTime} where id = #{orderNumber}")
-    void updateStatus(Integer orderStatus, Integer orderPaidStatus, LocalDateTime checkOutTime, String orderNumber);
+    @Update("update orders set status = #{status},pay_status = #{payStatus} ,checkout_time = #{checkoutTime} where number = #{number}")
+    void updateStatus(Orders orders);
 
     Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 
     @Select("select * from orders where id = #{id}")
     Orders getById(Long id);
+
+    @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
+    List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
 }
