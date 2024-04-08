@@ -69,4 +69,11 @@ public class OrderController {
         orderService.reOrder(id);
         return Result.success();
     }
+
+    @GetMapping("/reminder/{id}")
+    @ApiOperation("催单功能")
+    public Result remindOrder(@PathVariable("id") Long id){
+        orderService.remindOrder(id);
+        return Result.success();
+    }
 }
