@@ -6,6 +6,7 @@ import com.lty.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.aspectj.weaver.ast.Or;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,4 +49,7 @@ public interface OrderMapper {
 
     @Select("select count(id) from orders where status = #{status}")
     Integer countStatus(Integer status);
+
+    @Select("select * from orders where order_time > #{begin} and order_time < #{end}")
+    List<Orders> countOrder(Map<String, Object> map);
 }

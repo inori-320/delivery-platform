@@ -4,9 +4,12 @@ import com.lty.entity.Orders;
 import com.lty.mapper.OrderMapper;
 import com.lty.mapper.UserMapper;
 import com.lty.service.ReportService;
+import com.lty.vo.OrderReportVO;
+import com.lty.vo.OrderStatisticsVO;
 import com.lty.vo.TurnoverReportVO;
 import com.lty.vo.UserReportVO;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +28,7 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private UserMapper userMapper;
 
-    public TurnoverReportVO trunoverStatics(LocalDate begin, LocalDate end) {
+    public TurnoverReportVO turnoverStatics(LocalDate begin, LocalDate end) {
         List<LocalDate> dates = new ArrayList<>();
         List<Double> turnovers = new ArrayList<>();
         LocalDate date = begin;
@@ -83,5 +86,50 @@ public class ReportServiceImpl implements ReportService {
         String newUserList = StringUtils.join(newUsers, ",");
         String totalUserList = StringUtils.join(users, ",");
         return UserReportVO.builder().dateList(dateList).newUserList(newUserList).totalUserList(totalUserList).build();
+    }
+
+    public OrderReportVO ordersStatistics(LocalDate begin, LocalDate end) {
+        List<LocalDate> dates = new ArrayList<>();
+        List<Integer> orders = new ArrayList<>();
+        List<Integer> validOrders = new ArrayList<>();
+        LocalDate date = begin;
+        while(true){
+            dates.add(date);
+            if(date.equals(end)) break;
+            date = date.plusDays(1);
+        }
+        List<Orders> ordersList;
+        int totalOrderCount = 0;
+        int validOrderCount = 0;
+        for(LocalDate d: dates){
+            LocalDateTime beginDay = LocalDateTime.of(d, LocalTime.MIN);
+            LocalDateTime endDay = LocalDateTime.of(d, LocalTime.MAX);
+            Map<String, Object> map = new HashMap<>();
+            map.put("begin", beginDay);
+            map.put("end", endDay);
+            ordersList = orderMapper.countOrder(map);
+            orders.add(ordersList.size());
+            totalOrderCount += ordersList.size();
+            int cnt = 0;
+            for (Orders order : ordersList) {
+                if(order.getStatus().equals(Orders.COMPLETED)){
+                    validOrderCount ++;
+                    cnt ++;
+                }
+            }
+            validOrders.add(cnt);
+        }
+        String dateList = StringUtils.join(dates, ",");
+        String orderCountList = StringUtils.join(orders, ",");
+        String validOrderCountList = StringUtils.join(validOrders, ",");
+        Double orderCompletionRate = validOrderCount == totalOrderCount ? 1 : (double)validOrderCount / (double)totalOrderCount;
+        return OrderReportVO.builder()
+                .dateList(dateList)
+                .orderCountList(orderCountList)
+                .orderCompletionRate(orderCompletionRate)
+                .totalOrderCount(totalOrderCount)
+                .validOrderCount(validOrderCount)
+                .validOrderCountList(validOrderCountList)
+                .build();
     }
 }

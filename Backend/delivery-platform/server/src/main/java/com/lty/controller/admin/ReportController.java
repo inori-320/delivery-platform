@@ -2,6 +2,8 @@ package com.lty.controller.admin;
 
 import com.lty.result.Result;
 import com.lty.service.ReportService;
+import com.lty.vo.OrderReportVO;
+import com.lty.vo.OrderStatisticsVO;
 import com.lty.vo.TurnoverReportVO;
 import com.lty.vo.UserReportVO;
 import io.swagger.annotations.Api;
@@ -29,7 +31,7 @@ public class ReportController {
     @GetMapping("/turnoverStatistics")
     public Result<TurnoverReportVO> turnoverStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
                                                        @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
-        TurnoverReportVO turnoverReportVO = reportService.trunoverStatics(begin, end);
+        TurnoverReportVO turnoverReportVO = reportService.turnoverStatics(begin, end);
         return Result.success(turnoverReportVO);
     }
 
@@ -38,6 +40,14 @@ public class ReportController {
     public Result<UserReportVO> userStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
                                                @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
         UserReportVO reportVO = reportService.userStatistics(begin, end);
+        return Result.success(reportVO);
+    }
+
+    @GetMapping("/ordersStatistics")
+    @ApiOperation("订单统计")
+    public Result<OrderReportVO> ordersStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+                                                 @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        OrderReportVO reportVO = reportService.ordersStatistics(begin, end);
         return Result.success(reportVO);
     }
 }
