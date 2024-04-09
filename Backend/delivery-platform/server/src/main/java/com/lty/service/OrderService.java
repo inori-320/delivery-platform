@@ -3,6 +3,7 @@ package com.lty.service;
 import com.lty.dto.*;
 import com.lty.result.PageResult;
 import com.lty.vo.OrderPaymentVO;
+import com.lty.vo.OrderStatisticsVO;
 import com.lty.vo.OrderSubmitVO;
 import com.lty.vo.OrderVO;
 
@@ -45,4 +46,8 @@ public interface OrderService {
     void completeOrder(Long id);
 
     void remindOrder(Long id);
+
+    PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    OrderStatisticsVO statistics();
 }
