@@ -2,10 +2,7 @@ package com.lty.controller.admin;
 
 import com.lty.result.Result;
 import com.lty.service.ReportService;
-import com.lty.vo.OrderReportVO;
-import com.lty.vo.OrderStatisticsVO;
-import com.lty.vo.TurnoverReportVO;
-import com.lty.vo.UserReportVO;
+import com.lty.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +46,13 @@ public class ReportController {
                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
         OrderReportVO reportVO = reportService.ordersStatistics(begin, end);
         return Result.success(reportVO);
+    }
+
+    @GetMapping("/top10")
+    @ApiOperation("销量排名统计")
+    public Result<SalesTop10ReportVO> topStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+                                                    @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        SalesTop10ReportVO top10 = reportService.topStatistics(begin, end);
+        return Result.success(top10);
     }
 }

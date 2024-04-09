@@ -1,13 +1,12 @@
 package com.lty.service.impl;
 
+import com.lty.dto.GoodsSalesDTO;
 import com.lty.entity.Orders;
 import com.lty.mapper.OrderMapper;
 import com.lty.mapper.UserMapper;
 import com.lty.service.ReportService;
-import com.lty.vo.OrderReportVO;
-import com.lty.vo.OrderStatisticsVO;
-import com.lty.vo.TurnoverReportVO;
-import com.lty.vo.UserReportVO;
+import com.lty.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import java.util.*;
  * @author lty
  */
 @Service
+@Slf4j
 public class ReportServiceImpl implements ReportService {
     @Autowired
     private OrderMapper orderMapper;
@@ -130,6 +130,25 @@ public class ReportServiceImpl implements ReportService {
                 .totalOrderCount(totalOrderCount)
                 .validOrderCount(validOrderCount)
                 .validOrderCountList(validOrderCountList)
+                .build();
+    }
+
+    public SalesTop10ReportVO topStatistics(LocalDate begin, LocalDate end) {
+        LocalDateTime beginDay = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endDay = LocalDateTime.of(end, LocalTime.MAX);
+        List<String> names = new ArrayList<>();
+        List<Integer> nums = new ArrayList<>();
+        List<GoodsSalesDTO> goodsSalesDTOS = orderMapper.getSalesTop10(beginDay, endDay);
+        log.info("售卖货物：{}", goodsSalesDTOS.toString());
+        goodsSalesDTOS.forEach(g -> {
+            names.add(g.getName());
+            nums.add(g.getNumber());
+        });
+        String nameList = StringUtils.join(names, ",");
+        String numberList = StringUtils.join(nums, ",");
+        return SalesTop10ReportVO.builder()
+                .nameList(nameList)
+                .numberList(numberList)
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.lty.mapper;
 
 import com.github.pagehelper.Page;
+import com.lty.dto.GoodsSalesDTO;
 import com.lty.dto.OrdersPageQueryDTO;
 import com.lty.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
@@ -52,4 +53,6 @@ public interface OrderMapper {
 
     @Select("select * from orders where order_time > #{begin} and order_time < #{end}")
     List<Orders> countOrder(Map<String, Object> map);
+
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin, LocalDateTime end);
 }

@@ -1,9 +1,6 @@
 package com.lty.service;
 
-import com.lty.vo.OrderReportVO;
-import com.lty.vo.OrderStatisticsVO;
-import com.lty.vo.TurnoverReportVO;
-import com.lty.vo.UserReportVO;
+import com.lty.vo.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,4 +14,6 @@ public interface ReportService {
     UserReportVO userStatistics(LocalDate begin, LocalDate end);
 
     OrderReportVO ordersStatistics(LocalDate begin, LocalDate end);
+
+    SalesTop10ReportVO topStatistics(LocalDate begin, LocalDate end);
 }
