@@ -3,6 +3,7 @@ package com.lty.controller.admin;
 import com.lty.result.Result;
 import com.lty.service.ReportService;
 import com.lty.vo.TurnoverReportVO;
+import com.lty.vo.UserReportVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,13 @@ public class ReportController {
                                                        @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
         TurnoverReportVO turnoverReportVO = reportService.trunoverStatics(begin, end);
         return Result.success(turnoverReportVO);
+    }
+
+    @ApiOperation("用户量统计")
+    @GetMapping("/userStatistics")
+    public Result<UserReportVO> userStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+                                               @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        UserReportVO reportVO = reportService.userStatistics(begin, end);
+        return Result.success(reportVO);
     }
 }
