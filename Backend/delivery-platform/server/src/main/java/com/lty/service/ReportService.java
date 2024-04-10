@@ -2,6 +2,7 @@ package com.lty.service;
 
 import com.lty.vo.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -16,4 +17,6 @@ public interface ReportService {
     OrderReportVO ordersStatistics(LocalDate begin, LocalDate end);
 
     SalesTop10ReportVO topStatistics(LocalDate begin, LocalDate end);
+
+    void exportBusinessData(HttpServletResponse response);
 }
