@@ -51,6 +51,8 @@ public interface OrderMapper {
     @Select("select count(id) from orders where status = #{status}")
     Integer countStatus(Integer status);
 
+    Integer countByMap(Map<String, Object> map);
+
     @Select("select * from orders where order_time > #{begin} and order_time < #{end}")
     List<Orders> countOrder(Map<String, Object> map);
 
